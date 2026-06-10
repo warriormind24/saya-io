@@ -75,6 +75,11 @@ function setActiveView(view) {
     const node = document.getElementById(`view-${v}`);
     if (node) node.style.display = (v === view) ? '' : 'none';
   }
+  // Move focus into the active section for better UX
+  const activeRoot = document.getElementById(`view-${view}`);
+  if (activeRoot) activeRoot.tabIndex = -1;
+  activeRoot?.focus?.();
+
 
   const titleMap = {
     dashboard: ['Dashboard', 'Quick summary and next actions'],
@@ -148,13 +153,35 @@ if (els.storageMode) {
 }
 
 
-els.btnAddField.addEventListener('click', () => setActiveView('fields'));
-els.btnAddRecord?.addEventListener('click', () => setActiveView('records'));
-els.btnAddTaskInline?.addEventListener('click', () => setActiveView('tasks'));
-els.btnAddTask?.addEventListener('click', () => setActiveView('tasks'));
-els.goFields?.addEventListener('click', () => setActiveView('fields'));
-els.goRecords?.addEventListener('click', () => setActiveView('records'));
-els.goTasks?.addEventListener('click', () => setActiveView('tasks'));
+els.btnAddField.addEventListener('click', () => {
+  setActiveView('fields');
+  els.fieldName?.focus();
+});
+els.btnAddRecord?.addEventListener('click', () => {
+  setActiveView('records');
+  els.recordType?.focus();
+});
+els.btnAddTaskInline?.addEventListener('click', () => {
+  setActiveView('tasks');
+  els.taskType?.focus();
+});
+els.btnAddTask?.addEventListener('click', () => {
+  setActiveView('tasks');
+  els.taskType?.focus();
+});
+els.goFields?.addEventListener('click', () => {
+  setActiveView('fields');
+  els.fieldName?.focus();
+});
+els.goRecords?.addEventListener('click', () => {
+  setActiveView('records');
+  els.recordType?.focus();
+});
+els.goTasks?.addEventListener('click', () => {
+  setActiveView('tasks');
+  els.taskType?.focus();
+});
+
 
 // Create Field
 els.fieldSaveBtn.addEventListener('click', () => {
