@@ -95,11 +95,11 @@ function renderAll() {
   els.farmName.value = state.settings.farmName || '';
 
   if (els.storageMode) {
-    // keep select in sync with active storage mode
-    els.storageMode.value = state.settings?.storageMode || els.storageMode.value || 'local';
+    els.storageMode.value = (state.settings && state.settings.storageMode) ? state.settings.storageMode : (els.storageMode.value || 'local');
   }
 
   if (currentView === 'dashboard') {
+
     renderDashboard({ state, els });
   } else if (currentView === 'records') {
     renderRecords({ state, els });
@@ -111,7 +111,6 @@ function renderAll() {
     // nothing else to render
   }
 }
-
 
 function hydrateFormDefaults() {
   const today = formatDateISO(new Date());
@@ -125,28 +124,6 @@ bindCommonNav({
   state,
   onSelect: (view) => setActiveView(view)
 });
-
-// Storage mode switch (local <-> session)
-if (els.storageMode) {
-  els.storageMode.value = state.settings?.storageMode || els.storageMode.value || 'local';
-
-  els.storageMode.addEventListener('change', () => {
-    const mode = els.storageMode.value;
-    // Persist the selected mode key
-    setStorageMode(mode);
-
-    // Load fresh state from the newly active storage
-    const newState = loadState();
-    // Ensure the selected mode is visible in Settings panel
-    newState.settings = newState.settings || { farmName: '' };
-    newState.settings.storageMode = mode;
-
-    // Mutate existing state object reference so event delegation keeps working
-    Object.assign(state, newState);
-    renderAll();
-  });
-}
-
 
 els.btnAddField.addEventListener('click', () => setActiveView('fields'));
 els.btnAddRecord?.addEventListener('click', () => setActiveView('records'));

@@ -321,17 +321,12 @@ export function renderTasks({ state, els }) {
 function escapeHtml(s) {
   return String(s)
     .replaceAll('&', '&amp;')
-    .replaceAll('<', '<')
-    .replaceAll('>', '>')
+.replaceAll('<', '<')
+
+.replaceAll('>', '>')
     .replaceAll('"', '"')
     .replaceAll("'", '&#039;');
 }
-
-
-
-
-
-
 
 
 
