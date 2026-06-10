@@ -1,0 +1,13 @@
+{
+  "name": "saya-io",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Digital record-keeping Smart Farming app (saya io)",
+  "type": "module",
+  "scripts": {
+    "dev": "node -e \"const http=require('http');const fs=require('fs');const path=require('path');http.createServer((req,res)=>{const url=req.url==='/'?'/index.html':req.url;const p=path.join(process.cwd(),url);fs.readFile(p,(e,d)=>{if(e){res.writeHead(404);res.end('Not found');return;}res.writeHead(200);res.end(d);});}).listen(5173,()=>console.log('http://localhost:5173'));\"",
+    "build": "echo 'No build step required (static files).'"
+  },
+  "dependencies": {}
+}
+

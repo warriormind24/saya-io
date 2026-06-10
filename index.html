@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>saya io — Smart Farming Records</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --panel:#111b33;
+      --muted:#9fb0d0;
+      --text:#eaf1ff;
+      --accent:#2dd4bf;
+      --accent2:#60a5fa;
+      --danger:#fb7185;
+      --border:rgba(255,255,255,0.10);
+      --shadow: 0 10px 35px rgba(0,0,0,0.35);
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: radial-gradient(1200px 500px at 10% 0%, rgba(96,165,250,0.25), transparent 55%),
+                  radial-gradient(900px 400px at 90% 10%, rgba(45,212,191,0.18), transparent 50%),
+                  var(--bg);
+      color:var(--text);
+      min-height:100vh;
+    }
+    header{
+      padding:18px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      max-width:1100px;
+      margin:0 auto;
+    }
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{
+      width:42px;height:42px;border-radius:14px;
+      background: linear-gradient(135deg, rgba(45,212,191,0.95), rgba(96,165,250,0.95));
+      box-shadow: 0 8px 26px rgba(45,212,191,0.18);
+      position:relative;
+    }
+    .logo:after{
+      content:"";position:absolute;inset:10px;
+      border-radius:12px;
+      background: rgba(11,18,32,0.55);
+      border:1px solid rgba(255,255,255,0.18);
+    }
+    .brand h1{font-size:16px;margin:0;letter-spacing:0.2px}
+    .brand p{margin:2px 0 0 0;color:var(--muted);font-size:12px}
+
+    main{max-width:1100px;margin:0 auto;padding:0 16px 40px}
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+      align-items:start;
+    }
+    @media(min-width:900px){
+      .grid{grid-template-columns: 1.2fr 0.8fr}
+    }
+
+    .card{
+      background: rgba(17,27,51,0.75);
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .card .hd{
+      padding:14px 14px 0 14px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .card .hd h2{margin:0;font-size:14px}
+    .card .hd .sub{margin-top:6px;color:var(--muted);font-size:12px}
+
+    .card .bd{padding:14px}
+
+    .btnbar{display:flex;gap:10px;flex-wrap:wrap}
+    button, .btn{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:600;
+      font-size:13px;
+    }
+    button.primary{
+      background: linear-gradient(135deg, rgba(45,212,191,0.95), rgba(96,165,250,0.92));
+      border-color: rgba(255,255,255,0.14);
+      color:#041019;
+    }
+    button.danger{border-color: rgba(251,113,133,0.35);}
+    button:disabled{opacity:0.55;cursor:not-allowed}
+
+    .form{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+    }
+    @media(min-width:700px){
+      .form{grid-template-columns: 1fr 1fr}
+      .span2{grid-column:1/-1}
+    }
+
+    label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+    input, select, textarea{
+      width:100%;
+      border-radius:12px;
+      padding:10px 12px;
+      background: rgba(0,0,0,0.15);
+      border:1px solid var(--border);
+      color:var(--text);
+      outline:none;
+      font-size:13px;
+    }
+    textarea{min-height:92px;resize:vertical}
+
+    .list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .item{
+      padding:12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,0.12);
+    }
+    .item h3{margin:0;font-size:14px}
+    .meta{margin-top:6px;color:var(--muted);font-size:12px;line-height:1.5}
+
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap:10px;
+    }
+    .kpi .tile{
+      padding:12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,0.10);
+    }
+    .kpi .v{font-size:20px;font-weight:800}
+    .kpi .t{color:var(--muted);font-size:12px;margin-top:4px}
+
+    .toast{
+      position:fixed;left:16px;bottom:16px;
+      background: rgba(17,27,51,0.95);
+      border:1px solid var(--border);
+      color:var(--text);
+      padding:12px 14px;
+      border-radius:14px;
+      box-shadow: var(--shadow);
+      display:none;
+      max-width:520px;
+      z-index:50;
+    }
+    .toast.show{display:block}
+    .toast .row{display:flex;gap:10px;align-items:flex-start}
+    .pill{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted)
+    }
+
+    nav{
+      display:flex;gap:10px;flex-wrap:wrap
+    }
+    nav .tab{
+      padding:9px 10px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      cursor:pointer;
+      background: rgba(255,255,255,0.03);
+      font-size:13px;
+      color:var(--muted);
+      font-weight:700;
+      user-select:none;
+    }
+    nav .tab.active{
+      background: rgba(45,212,191,0.15);
+      border-color: rgba(45,212,191,0.35);
+      color:var(--text)
+    }
+
+    .muted{color:var(--muted)}
+    .hr{height:1px;background:var(--border);margin:14px 0}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <h1>saya io</h1>
+        <p>Smart farming digital record-keeping</p>
+      </div>
+    </div>
+    <nav aria-label="Primary navigation">
+      <div class="tab active" data-view="dashboard" role="button" tabindex="0">Dashboard</div>
+      <div class="tab" data-view="records" role="button" tabindex="0">Records</div>
+      <div class="tab" data-view="fields" role="button" tabindex="0">Fields</div>
+      <div class="tab" data-view="tasks" role="button" tabindex="0">Tasks</div>
+      <div class="tab" data-view="settings" role="button" tabindex="0">Settings</div>
+    </nav>
+  </header>
+
+  <main>
+    <div class="grid">
+      <!-- Left column -->
+      <section class="card" aria-live="polite">
+        <div class="hd">
+          <div>
+            <h2 id="viewTitle">Dashboard</h2>
+            <div class="sub" id="viewSubtitle">Quick summary and next actions</div>
+          </div>
+          <div class="btnbar">
+            <button class="primary" id="btnAddTask" type="button">+ Add Task</button>
+          </div>
+        </div>
+        <div class="bd">
+          <!-- Dashboard -->
+          <div id="view-dashboard">
+            <div class="kpi" style="margin-bottom:14px">
+              <div class="tile">
+                <div class="v" id="kpiFields">0</div>
+                <div class="t">Fields</div>
+              </div>
+              <div class="tile">
+                <div class="v" id="kpiCrops">0</div>
+                <div class="t">Active crops</div>
+              </div>
+              <div class="tile">
+                <div class="v" id="kpiRecords">0</div>
+                <div class="t">Records</div>
+              </div>
+              <div class="tile">
+                <div class="v" id="kpiTasks">0</div>
+                <div class="t">Open tasks</div>
+              </div>
+            </div>
+
+            <div class="hr"></div>
+            <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap">
+              <div>
+                <div style="font-weight:800">Recent activity</div>
+                <div class="muted" style="font-size:12px;margin-top:4px">Latest records and task updates</div>
+              </div>
+              <div class="pill" id="farmPill">No farm yet</div>
+            </div>
+
+            <div class="hr" style="margin-top:12px"></div>
+            <div class="list" id="recentList"></div>
+          </div>
+
+          <!-- Records -->
+          <div id="view-records" style="display:none">
+            <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start">
+              <div>
+                <div style="font-weight:800">Records</div>
+                <div class="muted" style="font-size:12px;margin-top:4px">Log events for fields: planting, spraying, harvesting, notes.</div>
+              </div>
+              <div class="btnbar">
+                <button type="button" id="btnAddRecord" class="primary">+ Add Record</button>
+              </div>
+            </div>
+
+            <div class="hr"></div>
+            <div class="form" id="recordForm" style="margin-bottom:14px">
+              <div>
+                <label for="recordFieldId">Field</label>
+                <select id="recordFieldId"></select>
+              </div>
+              <div>
+                <label for="recordType">Type</label>
+                <select id="recordType">
+                  <option value="planting">Planting</option>
+                  <option value="irrigation">Irrigation</option>
+                  <option value="spraying">Spraying</option>
+                  <option value="fertilizing">Fertilizing</option>
+                  <option value="harvesting">Harvesting</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="span2">
+                <label for="recordDate">Date</label>
+                <input type="date" id="recordDate" />
+              </div>
+              <div class="span2">
+                <label for="recordNotes">Notes</label>
+                <textarea id="recordNotes" placeholder="Add observations, quantities, pesticide name, yield estimates..."></textarea>
+              </div>
+              <div class="span2" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+                <button type="button" id="recordSaveBtn" class="primary">Save record</button>
+                <button type="button" id="recordResetBtn">Reset</button>
+              </div>
+            </div>
+
+            <div class="list" id="recordList"></div>
+          </div>
+
+          <!-- Fields -->
+          <div id="view-fields" style="display:none">
+            <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start">
+              <div>
+                <div style="font-weight:800">Fields</div>
+                <div class="muted" style="font-size:12px;margin-top:4px">Create fields and assign crop information.</div>
+              </div>
+              <div class="btnbar">
+                <button type="button" id="btnAddField" class="primary">+ Add Field</button>
+              </div>
+            </div>
+
+            <div class="hr"></div>
+            <div class="form" id="fieldForm" style="margin-bottom:14px">
+              <div>
+                <label for="fieldName">Field name</label>
+                <input id="fieldName" placeholder="e.g., Block A" />
+              </div>
+              <div>
+                <label for="fieldCrop">Crop</label>
+                <input id="fieldCrop" placeholder="e.g., Maize" />
+              </div>
+              <div class="span2">
+                <label for="fieldSeason">Season</label>
+                <input id="fieldSeason" placeholder="e.g., 2026A" />
+              </div>
+              <div class="span2" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+                <button type="button" id="fieldSaveBtn" class="primary">Save field</button>
+                <button type="button" id="fieldResetBtn">Reset</button>
+              </div>
+            </div>
+
+            <div class="list" id="fieldList"></div>
+          </div>
+
+          <!-- Tasks -->
+          <div id="view-tasks" style="display:none">
+            <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start">
+              <div>
+                <div style="font-weight:800">Tasks</div>
+                <div class="muted" style="font-size:12px;margin-top:4px">Track farming work items and completion.</div>
+              </div>
+              <div class="btnbar">
+                <button type="button" id="btnAddTaskInline" class="primary">+ Add Task</button>
+              </div>
+            </div>
+
+            <div class="hr"></div>
+            <div class="form" id="taskForm" style="margin-bottom:14px">
+              <div>
+                <label for="taskFieldId">Field</label>
+                <select id="taskFieldId"></select>
+              </div>
+              <div>
+                <label for="taskType">Task</label>
+                <select id="taskType">
+                  <option value="weed">Weeding</option>
+                  <option value="spray">Spray chemicals</option>
+                  <option value="fertilize">Fertilize</option>
+                  <option value="irrigate">Irrigate</option>
+                  <option value="inspect">Inspection</option>
+                  <option value="harvest">Harvest</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label for="taskDueDate">Due date</label>
+                <input type="date" id="taskDueDate" />
+              </div>
+              <div>
+                <label for="taskPriority">Priority</label>
+                <select id="taskPriority">
+                  <option value="low">Low</option>
+                  <option value="medium" selected>Medium</option>
+                  <option value="high">High</option>
+                </select>
+              </div>
+              <div class="span2">
+                <label for="taskNotes">Notes</label>
+                <textarea id="taskNotes" placeholder="Who will do it, expected inputs, quantities..."></textarea>
+              </div>
+              <div class="span2" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+                <button type="button" id="taskSaveBtn" class="primary">Save task</button>
+                <button type="button" id="taskResetBtn">Reset</button>
+              </div>
+            </div>
+
+            <div class="list" id="taskList"></div>
+          </div>
+
+          <!-- Settings -->
+          <div id="view-settings" style="display:none">
+            <div style="font-weight:800">Settings</div>
+            <div class="muted" style="font-size:12px;margin-top:4px">Local-only demo: data is stored in your browser (localStorage).</div>
+
+            <div class="hr"></div>
+            <div class="form">
+              <div class="span2">
+                <label for="farmName">Farm name</label>
+                <input id="farmName" placeholder="e.g., Saya Farm" />
+              </div>
+              <div class="span2" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+                <button type="button" id="farmSaveBtn" class="primary">Save settings</button>
+                <button type="button" id="dataResetBtn" class="danger">Reset all data</button>
+              </div>
+            </div>
+
+            <div class="hr"></div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+              <button type="button" id="exportBtn">Export JSON</button>
+              <button type="button" id="importBtn">Import JSON</button>
+              <input type="file" id="importFile" accept="application/json" style="display:none" />
+            </div>
+            <div class="muted" style="font-size:12px;margin-top:10px">Tip: export regularly as a backup.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right column -->
+      <aside class="card">
+        <div class="hd">
+          <div>
+            <h2>Quick actions</h2>
+            <div class="sub">Get started fast</div>
+          </div>
+        </div>
+        <div class="bd">
+          <div class="list">
+            <div class="item">
+              <h3>1) Add a field</h3>
+              <div class="meta">Create a field and set crop + season. This becomes the base for records and tasks.</div>
+              <div class="btnbar" style="margin-top:10px">
+                <button type="button" id="goFields" class="primary">Go to Fields</button>
+              </div>
+            </div>
+            <div class="item">
+              <h3>2) Log a record</h3>
+              <div class="meta">Track events like planting, spraying, fertilizing, irrigation, and harvesting.</div>
+              <div class="btnbar" style="margin-top:10px">
+                <button type="button" id="goRecords">Go to Records</button>
+              </div>
+            </div>
+            <div class="item">
+              <h3>3) Plan tasks</h3>
+              <div class="meta">Set due dates, priority, and notes for farming activities.</div>
+              <div class="btnbar" style="margin-top:10px">
+                <button type="button" id="goTasks">Go to Tasks</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <div class="row">
+      <div style="font-weight:900">saya io</div>
+      <div class="muted" id="toastMsg">Saved</div>
+    </div>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
+
